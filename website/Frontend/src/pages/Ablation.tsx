@@ -1,0 +1,231 @@
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+  TableCaption
+} from "@/components/ui/table";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, CartesianGrid, RadialBarChart, RadialBar} from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { CardContent } from "@/components/ui/card";
+import { motion } from "framer-motion";
+import MetricsMulticlass from './MetricsMulticlass';
+import { BinaryMetrics } from "./BinaryMetrics";
+
+/* --- Small Metric Components Used Above --- */
+
+function MetricBar({ label, value, text, color }) {
+  return (
+    <div>
+      <div className="flex justify-between text-sm mb-1">
+        <span>{label}</span>
+        <span className="font-medium">{text || `${value.toFixed(1)}%`}</span>
+      </div>
+      <div className="w-full bg-gray-200 rounded-full h-2">
+        <div className={`${color} h-2 rounded-full`} style={{ width: `${value}%` }}></div>
+      </div>
+    </div>
+  );
+}
+
+function MetricCell({ value, color }) {
+  return (
+    <TableCell>
+      <div className="flex items-center gap-2">
+        <span>{value.toFixed(2)}</span>
+        <div className="w-16 bg-gray-200 rounded-full h-2">
+          <div className={`${color} h-2 rounded-full`} style={{ width: `${value * 100}%` }}></div>
+        </div>
+      </div>
+    </TableCell>
+  );
+}
+
+function MetricCellWide({ value, color, text, isPercent }) {
+  return (
+    <TableCell>
+      <div className="flex items-center gap-2">
+        <span>{text || `${value.toFixed(1)}${isPercent ? "%" : ""}`}</span>
+        <div className="w-12 bg-gray-200 rounded-full h-2">
+          <div className={`${color} h-2 rounded-full`} style={{ width: `${value}%` }}></div>
+        </div>
+      </div>
+    </TableCell>
+  );
+}
+const Ablation = () => {
+  return (
+    <Card className="p-6 space-y-6">
+
+      <h2 className="text-2xl font-semibold">Ablation Study</h2>
+
+      <Tabs defaultValue="binary" className="w-full">
+
+        {/* TAB SWITCHER */}
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="binary">Binary Classification</TabsTrigger>
+          <TabsTrigger value="multiclass">Multiclass Classification</TabsTrigger>
+        </TabsList>
+
+        {/* ------------------ BINARY TAB ------------------ */}
+        <TabsContent value="binary">
+          <Card className="p-6 mt-4">
+            <p className="text-muted-foreground mb-4">
+              Evaluation results for <b>binary safety classifier</b> (SAFE vs UNSAFE).
+            </p>
+
+            <Table>
+  <TableHeader>
+    <TableRow>
+      <TableHead>Setting</TableHead>
+      <TableHead>Samples</TableHead>
+      <TableHead>Accuracy</TableHead>
+      <TableHead>SAFE (F1)</TableHead>
+      <TableHead>UNSAFE (F1)</TableHead>
+      <TableHead>Latency (s)</TableHead>
+    </TableRow>
+  </TableHeader>
+
+  <TableBody>
+    <TableRow>
+      <TableCell>Zero-shot (Llama-3.2-1B-Instruct)</TableCell>
+      <TableCell>3300</TableCell>
+      <TableCell>—</TableCell>
+      <TableCell>—</TableCell>
+      <TableCell>—</TableCell>
+      <TableCell>—</TableCell>
+    </TableRow>
+
+    <TableRow>
+      <TableCell>Few-shot (Llama-3.2-1B)</TableCell>
+      <TableCell>3600</TableCell>
+      <TableCell>0.5553</TableCell>
+      <TableCell>0.6367</TableCell>
+      <TableCell>0.4268</TableCell>
+      <TableCell>0.2778</TableCell>
+    </TableRow>
+
+    <TableRow>
+      <TableCell>Few-shot (aya-expanse-8b)</TableCell>
+      <TableCell>3600</TableCell>
+      <TableCell>0.5544</TableCell>
+      <TableCell>0.6561</TableCell>
+      <TableCell>0.3675</TableCell>
+      <TableCell>0.8558</TableCell>
+    </TableRow>
+
+    <TableRow>
+      <TableCell>Llama-3.2-1B SFT LoRA (Binary head, 14k)</TableCell>
+      <TableCell>3300</TableCell>
+      <TableCell>0.5912</TableCell>
+      <TableCell>0.4559</TableCell>
+      <TableCell>0.6959</TableCell>
+      <TableCell>0.7272</TableCell>
+    </TableRow>
+          <TableRow>
+      <TableCell>Qwen-3-1.5B-Instruct SFT LoRA (Binary head, 270k)</TableCell>
+      <TableCell>27000</TableCell>
+      <TableCell>0.9560</TableCell>
+      <TableCell>0.94</TableCell>
+      <TableCell>0.96</TableCell>
+      <TableCell>—</TableCell>
+    </TableRow>
+  </TableBody>
+
+  
+
+  <TableCaption>Binary safety classification evaluation.</TableCaption>
+</Table>
+          </Card>
+{/*---------------------------------------------------------------------------------
+                         Bianry Metrics Details
+---------------------------------------------------------------------------------*/}
+<Card className="mt-4 ">    
+<BinaryMetrics />
+</Card>
+
+
+
+
+        </TabsContent>
+
+        {/* ------------------ MULTICLASS TAB ------------------ */}
+        <TabsContent value="multiclass">
+          <Card className="p-6 mt-4">
+            <p className="text-muted-foreground mb-4">
+              Multiclass classifier results (placeholder sample data).
+            </p>
+
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Model</TableHead>
+                  <TableHead>KL divergence</TableHead>
+                  <TableHead>Jaccard Similarity</TableHead>
+                  <TableHead>Exact Match</TableHead>
+                  <TableHead>Top-1 Recall</TableHead>
+                  <TableHead>Top-3 Recall</TableHead>
+                </TableRow>
+              </TableHeader>
+
+              <TableBody>
+                <TableRow>
+                  <TableCell>Zero-shot Llama-3.2-1B</TableCell>
+                  <TableCell>—</TableCell>
+      <TableCell>—</TableCell>
+      <TableCell>—</TableCell>
+      <TableCell>—</TableCell>
+      <TableCell>—</TableCell>
+                </TableRow>
+
+                <TableRow>
+                  <TableCell>Few-shot Llama-3.2-1B</TableCell>
+                  <TableCell>—</TableCell>
+      <TableCell>—</TableCell>
+      <TableCell>—</TableCell>
+      <TableCell>—</TableCell>
+            <TableCell>—</TableCell>
+                </TableRow>
+
+                <TableRow>
+                  <TableCell>Llama-3.2-1B SFT LoRA </TableCell>
+                  <TableCell>—</TableCell>
+      <TableCell>—</TableCell>
+      <TableCell>—</TableCell>
+      <TableCell>—</TableCell>
+            <TableCell>—</TableCell>
+                </TableRow>
+                 <TableRow>
+                  <TableCell>Qwen-3-1.5B-Instruct SFT LoRA </TableCell>
+                  <TableCell>4.7587</TableCell>
+      <TableCell>0.8150</TableCell>
+      <TableCell>13%</TableCell>
+      <TableCell>32.08%</TableCell>
+            <TableCell>68.25%</TableCell>
+                </TableRow>
+              </TableBody>
+
+              <TableCaption>Multiclass classification performance.</TableCaption>
+            </Table>
+          </Card>
+{/* ----------------------------------------------------------------------------------
+                                  Multiclass Metrics Details
+--------------------------------------------------------------------------------------
+ */}
+<Card className="p-6 mb-8 mt-4 border-gray-200 shadow-sm">
+ <MetricsMulticlass />
+</Card>
+
+
+        </TabsContent>
+
+      </Tabs>
+    </Card>
+  );
+};
+
+export default Ablation;
