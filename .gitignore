@@ -1,0 +1,30 @@
+.venv/
+labelled_data/
+raw_data/
+ckpt/
+ckpt.zip
+OpenRLHF/
+
+# --- Frontend / Node ---
+# Ignore any node modules (site-wide + inside website/Frontend)
+**/node_modules/
+
+# Vite build output
+website/Frontend/dist/
+dist/
+
+# environment files (do not commit secrets)
+**/.env
+**/.env.*
+website/Frontend/.env
+website/Frontend/.env.*
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS/Editor
+.DS_Store
+.vscode/
+.idea/
